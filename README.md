@@ -38,7 +38,7 @@ Make sure your `google-ads.yaml` file contains the following keys:
 
 ### 3. Configure Gemini CLI
 
-Update your Gemini configuration to include the `google-ads-mcp` server. The following is an example of a local MCP server configuration:
+Update your Gemini configuration to include the `google-ads-mcp` server. `[DIRECTORY]` will be the absolute path to the project. The following is an example of a local MCP server configuration:
 
 ```json5
 {
@@ -50,13 +50,10 @@ Update your Gemini configuration to include the `google-ads-mcp` server. The fol
         "run",
         "--directory",
         "[DIRECTORY]",
-        "ads-mcp/server.py"
+        "ads_mcp/server.py"
       ],
       "timeout": 30000,
-      "trust": false,
-      "includeTools": [
-        ""
-      ]
+      "trust": false
     }
   }
 }
