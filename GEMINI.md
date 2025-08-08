@@ -5,8 +5,6 @@ Indent code blocks with 2 spaces. Never use tabs. Implied line continuation shou
 
 Always run `pylint` and fix the issues after wrapping a code change.
 
-A Google-version `pylint` is `gpylint`.
-
 ## Building and running
 The project is managed by using `uv`. Use `uv` to execute any Python-related commands.
 

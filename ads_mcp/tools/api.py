@@ -20,10 +20,10 @@ from ads_mcp.coordinator import mcp
 from ads_mcp.utils import ROOT_DIR
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.util import get_nested_attr
-from google.ads.googleads.v20.services.services.customer_service import (
+from google.ads.googleads.v21.services.services.customer_service import (
     CustomerServiceClient,
 )
-from google.ads.googleads.v20.services.services.google_ads_service import (
+from google.ads.googleads.v21.services.services.google_ads_service import (
     GoogleAdsServiceClient,
 )
 import proto

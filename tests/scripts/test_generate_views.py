@@ -23,7 +23,7 @@ def test_get_view_json_url():
   """Tests the get_view_json_url function."""
   assert (
       generate_views.get_view_json_url("campaign")
-      == "https://gaql-query-builder.uc.r.appspot.com/schemas/v20/campaign.json"
+      == "https://gaql-query-builder.uc.r.appspot.com/schemas/v21/campaign.json"
   )
 
 

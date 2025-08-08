@@ -23,8 +23,12 @@ from scripts.generate_views import update_views_yaml
 
 tools = [api, docs]
 
+
+def main():
+  """Initializes and runs the MCP server."""
+  update_views_yaml()  # Check and update docs resource
+  mcp.run()  # Initialize and run the server
+
+
 if __name__ == "__main__":
-  # Check and update docs
-  update_views_yaml()
-  # Initialize and run the server
-  mcp.run()
+  main()

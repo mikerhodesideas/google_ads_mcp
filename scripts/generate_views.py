@@ -19,7 +19,7 @@ from typing import Any, Literal
 import httpx
 import yaml
 
-ADS_API_VERSION = "v20"
+ADS_API_VERSION = "v21"
 VIEW_JSON_URL_PATH = (
     f"https://gaql-query-builder.uc.r.appspot.com/schemas/{ADS_API_VERSION}/"
 )

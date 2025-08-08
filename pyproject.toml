@@ -1,19 +1,30 @@
 [project]
 name = "google-ads-api-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "An implementation of MCP server for the Google Ads API."
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [
     { name = "Du, Meng", email = "mengd@google.com" },
     { name = "Chang, Hugo", email = "hugochang@google.com" },
+    { name = "Haozhou Shen", email = "haozhoushen@google.com" },
 ]
-
 license = "Apache-2.0"
 license-files = ["LICENSE"]
+keywords = ["google-ads", "api", "mcp", "gemini", "llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 dependencies = [
-    "google-ads>=27.0.0",
+    "google-ads>=28.0.0",
     "httpx[http2]>=0.28.1",
     "mcp[cli]>=1.12.2",
     "pyyaml>=6.0.2",
@@ -26,6 +37,14 @@ dev = [
     "pytest>=8.3.2",
     "pytest-mock>=3.12.0",
 ]
+
+[project.urls]
+"Homepage" = "https://github.com/google-marketing-solutions/google_ads_mcp"
+"Repository" = "https://github.com/google-marketing-solutions/google_ads_mcp"
+"Issue Tracker" = "https://github.com/google-marketing-solutions/google_ads_mcp/issues"
+
+[project.scripts]
+run-mcp-server = "ads_mcp.server:main"
 
 [tool.pyink]
 # Formatting configuration to follow Google style-guide
