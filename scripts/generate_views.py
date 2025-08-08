@@ -13,11 +13,15 @@
 # limitations under the License.
 """Generates YAML files for Google Ads API reporting views."""
 
+import asyncio
+import logging
 import os
 from typing import Any, Literal
 
 import httpx
 import yaml
+
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 ADS_API_VERSION = "v21"
 VIEW_JSON_URL_PATH = (
@@ -26,15 +30,16 @@ VIEW_JSON_URL_PATH = (
 MODULE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONTEXT_PATH = f"{MODULE_ROOT}/context"
 
-http_client = httpx.Client(http2=True)
+http_client = httpx.AsyncClient(http2=True)
 
 
 def get_view_json_url(view: str) -> str:
   return f"{VIEW_JSON_URL_PATH}{view}.json"
 
 
-def get_view_json(view: str) -> dict[str, Any]:
-  http_res = http_client.get(get_view_json_url(view))
+async def get_view_json(view: str) -> dict[str, Any]:
+  """Fetches the JSON definition for a given reporting view."""
+  http_res = await http_client.get(get_view_json_url(view))
   view_json = http_res.json()
   return view_json
 
@@ -68,9 +73,9 @@ def get_fields_obj(
   }
 
 
-def save_view_yaml(view: str, path: str = "."):
+async def save_view_yaml(view: str, path: str = "."):
   """Saves the reporting view metadata as a YAML file."""
-  view_json = get_view_json(view)
+  view_json = await get_view_json(view)
 
   attributed_views = set(
       v.split(".")[0]
@@ -92,7 +97,7 @@ def save_view_yaml(view: str, path: str = "."):
     yaml.safe_dump(view_data, f, sort_keys=False)
 
 
-def update_views_yaml():
+async def update_views_yaml():
   """Updates the YAML files for all reporting views."""
   if os.path.isfile(f"{CONTEXT_PATH}/.api-version"):
     with open(f"{CONTEXT_PATH}/.api-version", "r", encoding="utf-8") as f:
@@ -101,12 +106,13 @@ def update_views_yaml():
 
   with open(f"{CONTEXT_PATH}/views.yaml", "r", encoding="utf-8") as f:
     views = yaml.safe_load(f)
-  for view in views:
-    save_view_yaml(view, f"{CONTEXT_PATH}/views")
+
+  tasks = [save_view_yaml(view, f"{CONTEXT_PATH}/views") for view in views]
+  await asyncio.gather(*tasks)
 
   with open(f"{CONTEXT_PATH}/.api-version", "w", encoding="utf-8") as f:
     f.write(ADS_API_VERSION)
 
 
 if __name__ == "__main__":
-  update_views_yaml()
+  asyncio.run(update_views_yaml())

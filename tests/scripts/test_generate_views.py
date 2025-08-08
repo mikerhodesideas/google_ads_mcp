@@ -13,9 +13,9 @@
 # limitations under the License.
 
 """Tests for the view generation script."""
-
 from unittest import mock
 
+import pytest
 from scripts import generate_views
 
 
@@ -27,11 +27,14 @@ def test_get_view_json_url():
   )
 
 
-@mock.patch("httpx.Client.get")
-def test_get_view_json(mock_get):
+@pytest.mark.asyncio
+@mock.patch("httpx.AsyncClient.get", new_callable=mock.AsyncMock)
+async def test_get_view_json(mock_get):
   """Tests the get_view_json function."""
-  mock_get.return_value.json.return_value = {"name": "campaign"}
-  assert generate_views.get_view_json("campaign") == {"name": "campaign"}
+  mock_response = mock.MagicMock()
+  mock_response.json.return_value = {"name": "campaign"}
+  mock_get.return_value = mock_response
+  assert await generate_views.get_view_json("campaign") == {"name": "campaign"}
 
 
 def test_get_fields_obj():
@@ -70,10 +73,13 @@ def test_get_fields_obj():
   assert generate_views.get_fields_obj(view_json, "attributes") == expected
 
 
-@mock.patch("scripts.generate_views.get_view_json")
+@pytest.mark.asyncio
+@mock.patch(
+    "scripts.generate_views.get_view_json", new_callable=mock.AsyncMock
+)
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("yaml.safe_dump")
-def test_save_view_yaml(mock_safe_dump, mock_open, mock_get_view_json):
+async def test_save_view_yaml(mock_safe_dump, mock_open, mock_get_view_json):
   """Tests the save_view_yaml function."""
   mock_get_view_json.return_value = {
       "display_name": "Campaign",
@@ -97,24 +103,27 @@ def test_save_view_yaml(mock_safe_dump, mock_open, mock_get_view_json):
           }
       },
   }
-  generate_views.save_view_yaml("campaign", path="/fake/dir")
+  await generate_views.save_view_yaml("campaign", path="/fake/dir")
   mock_open.assert_called_with(
       "/fake/dir/campaign.yaml", "w", encoding="utf-8"
   )
   mock_safe_dump.assert_called_once()
 
 
+@pytest.mark.asyncio
 @mock.patch("os.path.isfile")
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("yaml.safe_load")
-@mock.patch("scripts.generate_views.save_view_yaml")
-def test_update_views_yaml(
+@mock.patch(
+    "scripts.generate_views.save_view_yaml", new_callable=mock.AsyncMock
+)
+async def test_update_views_yaml(
     mock_save_view_yaml, mock_safe_load, mock_open, mock_isfile
 ):
   """Tests the update_views_yaml function."""
   mock_isfile.return_value = False
   mock_safe_load.return_value = ["campaign", "ad_group"]
-  generate_views.update_views_yaml()
+  await generate_views.update_views_yaml()
   assert mock_save_view_yaml.call_count == 2
   mock_open.assert_any_call(
       mock.ANY, "w", encoding="utf-8"
