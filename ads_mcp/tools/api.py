@@ -20,6 +20,7 @@ from typing import Any
 from ads_mcp.coordinator import mcp_server as mcp
 from ads_mcp.utils import ROOT_DIR
 from google.ads.googleads.client import GoogleAdsClient
+from google.ads.googleads.errors import GoogleAdsException
 from google.ads.googleads.util import get_nested_attr
 from google.ads.googleads.v21.services.services.customer_service import (
     CustomerServiceClient,
@@ -89,7 +90,8 @@ def execute_gaql(
       customer_id: The ID of the customer being queried. It is only digits.
       login_customer_id: (Optional) The ID of the customer being logged in.
           Usually, it is the MCC on top of the target customer account.
-          It is only digits. Leave it empty if not need be specific.
+          It is only digits.
+          In most cases, a default account is set, it could be optional.
 
   Returns:
       An array of object, each object representing a row of the query results.
@@ -101,15 +103,18 @@ def execute_gaql(
   ads_service: GoogleAdsServiceClient = ads_client.get_service(
       "GoogleAdsService"
   )
-  query_res = ads_service.search_stream(query=query, customer_id=customer_id)
-  output = []
-  for batch in query_res:
-    for row in batch.results:
-      output.append(
-          {
-              i: format_value(get_nested_attr(row, i))
-              for i in batch.field_mask.paths
-          }
-      )
+  try:
+    query_res = ads_service.search_stream(query=query, customer_id=customer_id)
+    output = []
+    for batch in query_res:
+      for row in batch.results:
+        output.append(
+            {
+                i: format_value(get_nested_attr(row, i))
+                for i in batch.field_mask.paths
+            }
+        )
+  except GoogleAdsException as e:
+    raise RuntimeError("\n".join(str(i) for i in e.failure.errors)) from e
 
   return output
