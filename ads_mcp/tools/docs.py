@@ -17,7 +17,7 @@
 import os
 
 from ads_mcp.coordinator import mcp_server as mcp
-from ads_mcp.utils import ROOT_DIR
+from ads_mcp.utils import MODULE_DIR
 
 
 @mcp.tool()
@@ -30,7 +30,7 @@ def get_gaql_doc() -> str:
 def get_gaql_doc_resource() -> str:
   """Get Google Ads Query Language (GAQL) guides."""
   with open(
-      os.path.join(ROOT_DIR, "context/GAQL.md"), "r", encoding="utf-8"
+      os.path.join(MODULE_DIR, "context/GAQL.md"), "r", encoding="utf-8"
   ) as f:
     data = f.read()
   return data
@@ -57,7 +57,7 @@ def get_reporting_view_doc(view: str | None) -> str:
 def get_reporting_doc() -> str:
   """Get Google Ads API reporting view docs."""
   with open(
-      os.path.join(ROOT_DIR, "context/Google_Ads_API_Reporting_Views.md"),
+      os.path.join(MODULE_DIR, "context/Google_Ads_API_Reporting_Views.md"),
       "r",
       encoding="utf-8",
   ) as f:
@@ -76,7 +76,7 @@ def get_view_doc(view: str) -> str:
   """
   try:
     with open(
-        os.path.join(ROOT_DIR, f"context/views/{view}.yaml"),
+        os.path.join(MODULE_DIR, f"context/views/{view}.yaml"),
         "r",
         encoding="utf-8",
     ) as f:
