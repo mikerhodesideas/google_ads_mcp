@@ -8,12 +8,22 @@ The Google Ads MCP Server is an implementation of the Model Context Protocol (MC
 
 Copyright Google LLC. Supported by Google LLC and/or its affiliate(s). This solution, including any related sample code or data, is made available on an “as is,” “as available,” and “with all faults” basis, solely for illustrative purposes, and without warranty or representation of any kind. This solution is experimental, unsupported and provided solely for your convenience. Your use of it is subject to your agreements with Google, as applicable, and may constitute a beta feature as defined under those agreements. To the extent that you make any data available to Google in connection with your use of the solution, you represent and warrant that you have all necessary and appropriate rights, consents and permissions to permit Google to use and process that data. By using any portion of this solution, you acknowledge, assume and accept all risks, known and unknown, associated with its usage and any processing of data by Google, including with respect to your deployment of any portion of this solution in your systems, or usage in connection with your business, if at all. With respect to the entrustment of personal information to Google, you will verify that the established system is sufficient by checking Google's privacy policy and other public information, and you agree that no further information will be provided by Google.
 
+## Getting Started (Quick)
+
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_ADC_JSON"
+      },
+
 ## Getting Started
 
 Follow these instructions to configure and run the Google Ads MCP Server.
 
 ### 1. Configure Python Environment
 
+#### For Direct Use
+This project needs Python 3.12 with `pipx`.
+
+#### For Development
 This project uses [`uv`](https://github.com/astral-sh/uv) for dependency management.
 
 Install `uv` and then run the following command to install the required Python packages:
@@ -21,6 +31,10 @@ Install `uv` and then run the following command to install the required Python p
 ```bash
 uv pip sync
 ```
+
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_ADC_JSON"
+      },
 
 ### 2. Configure Google Ads credentials
 
@@ -36,8 +50,34 @@ Make sure your `google-ads.yaml` file contains the following keys:
 - `developer_token`
 - `login_customer_id` (optional, but recommended)
 
-### 3. Configure Gemini CLI
+### 3. Launch MCP Server
 
+#### For Direct Use with Gemini CLI
+
+Update your Gemini configuration to include the `google-ads-mcp` server. The following is an example of a local MCP server configuration:
+
+```json5
+{
+  // Other configs...
+  "mcpServers": {
+    "GoogleAds": {
+      "command": "pipx",
+      "args": [
+        "run",
+        "--spec",
+        "git+https://github.com/googleanalytics/google-analytics-mcp.git",
+        "run-mcp-server"
+      ],
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+Once the server is running, you can interact with it using the Gemini CLI. Type `/mcp` in Gemini to see the `Google Ads API` server listed in the results.
+
+#### For Local Development with Gemini CLI
 Update your Gemini configuration to include the `google-ads-mcp` server. `[DIRECTORY]` will be the absolute path to the project. The following is an example of a local MCP server configuration:
 
 ```json5
@@ -50,8 +90,10 @@ Update your Gemini configuration to include the `google-ads-mcp` server. `[DIREC
         "run",
         "--directory",
         "[DIRECTORY]",
-        "ads_mcp/server.py"
+        "-m",
+        "ads_mcp.server"
       ],
+      "cwd": "[DIRECTORY]",
       "timeout": 30000,
       "trust": false
     }
@@ -61,9 +103,9 @@ Update your Gemini configuration to include the `google-ads-mcp` server. `[DIREC
 
 Once the server is running, you can interact with it using the Gemini CLI. Type `/mcp` in Gemini to see the `Google Ads API` server listed in the results.
 
-## Launch
+#### Direct Launch
 
-To start the server directly, run the following command:
+To start the server directly, in the project path, run the following command:
 
 ```bash
 uv run -m ads_mcp.server

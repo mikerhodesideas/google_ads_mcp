@@ -11,9 +11,10 @@ wheels/
 
 # VS Code
 .vscode/settings.json
+.vscode/launch.json
 
 # Google Ads
-googleads.yaml
+google-ads.yaml
 
 # temp file
 .api-version

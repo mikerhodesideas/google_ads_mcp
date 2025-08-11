@@ -17,4 +17,4 @@
 from mcp.server.fastmcp import FastMCP
 
 # Initialize FastMCP server
-mcp = FastMCP("Google Ads API")
+mcp_server = FastMCP("Google Ads API")

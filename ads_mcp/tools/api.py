@@ -16,7 +16,7 @@
 
 from typing import Any
 
-from ads_mcp.coordinator import mcp
+from ads_mcp.coordinator import mcp_server as mcp
 from ads_mcp.utils import ROOT_DIR
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.util import get_nested_attr

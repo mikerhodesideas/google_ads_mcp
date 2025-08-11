@@ -15,14 +15,18 @@
 """Tests for the view generation script."""
 from unittest import mock
 
+from ads_mcp.scripts.generate_views import get_fields_obj
+from ads_mcp.scripts.generate_views import get_view_json
+from ads_mcp.scripts.generate_views import get_view_json_url
+from ads_mcp.scripts.generate_views import save_view_yaml
+from ads_mcp.scripts.generate_views import update_views_yaml
 import pytest
-from scripts import generate_views
 
 
 def test_get_view_json_url():
   """Tests the get_view_json_url function."""
   assert (
-      generate_views.get_view_json_url("campaign")
+      get_view_json_url("campaign")
       == "https://gaql-query-builder.uc.r.appspot.com/schemas/v21/campaign.json"
   )
 
@@ -34,7 +38,7 @@ async def test_get_view_json(mock_get):
   mock_response = mock.MagicMock()
   mock_response.json.return_value = {"name": "campaign"}
   mock_get.return_value = mock_response
-  assert await generate_views.get_view_json("campaign") == {"name": "campaign"}
+  assert await get_view_json("campaign") == {"name": "campaign"}
 
 
 def test_get_fields_obj():
@@ -70,12 +74,12 @@ def test_get_fields_obj():
           "sortable": True,
       }
   }
-  assert generate_views.get_fields_obj(view_json, "attributes") == expected
+  assert get_fields_obj(view_json, "attributes") == expected
 
 
 @pytest.mark.asyncio
 @mock.patch(
-    "scripts.generate_views.get_view_json", new_callable=mock.AsyncMock
+    "ads_mcp.scripts.generate_views.get_view_json", new_callable=mock.AsyncMock
 )
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("yaml.safe_dump")
@@ -103,7 +107,7 @@ async def test_save_view_yaml(mock_safe_dump, mock_open, mock_get_view_json):
           }
       },
   }
-  await generate_views.save_view_yaml("campaign", path="/fake/dir")
+  await save_view_yaml("campaign", path="/fake/dir")
   mock_open.assert_called_with(
       "/fake/dir/campaign.yaml", "w", encoding="utf-8"
   )
@@ -115,7 +119,8 @@ async def test_save_view_yaml(mock_safe_dump, mock_open, mock_get_view_json):
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("yaml.safe_load")
 @mock.patch(
-    "scripts.generate_views.save_view_yaml", new_callable=mock.AsyncMock
+    "ads_mcp.scripts.generate_views.save_view_yaml",
+    new_callable=mock.AsyncMock,
 )
 async def test_update_views_yaml(
     mock_save_view_yaml, mock_safe_load, mock_open, mock_isfile
@@ -123,7 +128,7 @@ async def test_update_views_yaml(
   """Tests the update_views_yaml function."""
   mock_isfile.return_value = False
   mock_safe_load.return_value = ["campaign", "ad_group"]
-  await generate_views.update_views_yaml()
+  await update_views_yaml()
   assert mock_save_view_yaml.call_count == 2
   mock_open.assert_any_call(
       mock.ANY, "w", encoding="utf-8"
