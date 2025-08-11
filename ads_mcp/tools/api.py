@@ -14,6 +14,7 @@
 
 """This module contains tools for interacting with the Google Ads API."""
 
+import os
 from typing import Any
 
 from ads_mcp.coordinator import mcp_server as mcp
@@ -29,13 +30,24 @@ from google.ads.googleads.v21.services.services.google_ads_service import (
 import proto
 
 
+def get_ads_client() -> GoogleAdsClient:
+  default_path = f"{ROOT_DIR}/google-ads.yaml"
+  credentials_path = os.environ.get("GOOGLE_ADS_CREDENTIALS", default_path)
+  if not os.path.isfile(credentials_path):
+    raise FileNotFoundError(
+        "Google Ads credentials YAML file is not found. "
+        "Check [GOOGLE_ADS_CREDENTIALS] config."
+    )
+  return GoogleAdsClient.load_from_storage(credentials_path)
+
+
 @mcp.tool(structured_output=True)
 def list_accessible_accounts() -> list[str]:
   """Lists Google Ads customers id directly accessible by the user.
 
   The accounts can be used as `login_customer_id`.
   """
-  ads_client = GoogleAdsClient.load_from_storage(f"{ROOT_DIR}/googleads.yaml")
+  ads_client = get_ads_client()
   customer_service: CustomerServiceClient = ads_client.get_service(
       "CustomerService"
   )
@@ -83,7 +95,7 @@ def execute_gaql(
       An array of object, each object representing a row of the query results.
   """
   query = preprocess_gaql(query)
-  ads_client = GoogleAdsClient.load_from_storage(f"{ROOT_DIR}/googleads.yaml")
+  ads_client = get_ads_client()
   if login_customer_id:
     ads_client.login_customer_id = login_customer_id
   ads_service: GoogleAdsServiceClient = ads_client.get_service(
