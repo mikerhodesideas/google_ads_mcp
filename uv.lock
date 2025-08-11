@@ -183,7 +183,7 @@ wheels = [
 [[package]]
 name = "google-ads-mcp"
 version = "0.2.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "google-ads" },
     { name = "httpx", extra = ["http2"] },

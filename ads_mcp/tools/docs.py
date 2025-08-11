@@ -16,7 +16,7 @@
 
 import os
 
-from ads_mcp.coordinator import mcp
+from ads_mcp.coordinator import mcp_server as mcp
 from ads_mcp.utils import ROOT_DIR
 
 
