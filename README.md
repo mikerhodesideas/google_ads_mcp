@@ -16,7 +16,7 @@ Follow these instructions to configure and run the Google Ads MCP Server.
 
 #### For Direct Use
 
-This project needs Python 3.12 with `pipx`.
+This project needs Python 3.12 with `pipx` or `uv`.
 
 #### For Development
 

@@ -14,7 +14,10 @@
 
 """The coordinator for the Google Ads API MCP."""
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
+
 
 # Initialize FastMCP server
-mcp_server = FastMCP("Google Ads API")
+mcp_server = FastMCP(
+    name="Google Ads API",
+)
