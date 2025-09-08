@@ -14,14 +14,34 @@
 
 """The server for the Google Ads API MCP."""
 import asyncio
+import os
 
 from ads_mcp.coordinator import mcp_server
 from ads_mcp.scripts.generate_views import update_views_yaml
 from ads_mcp.tools import api
 from ads_mcp.tools import docs
 
+import dotenv
+from fastmcp.server.auth.providers.google import GoogleProvider
+from fastmcp.server.auth.providers.google import GoogleTokenVerifier
+
+
+dotenv.load_dotenv()
+
 
 tools = [api, docs]
+
+if os.getenv("USE_GOOGLE_OAUTH_ACCESS_TOKEN"):
+  mcp_server.auth = GoogleTokenVerifier()
+
+if os.getenv("FASTMCP_SERVER_AUTH_GOOGLE_CLIENT_ID") and os.getenv(
+    "FASTMCP_SERVER_AUTH_GOOGLE_CLIENT_SECRET"
+):
+  base_url = os.getenv("FASTMCP_SERVER_BASE_URL", "http://localhost:8000")
+  mcp_server.auth = GoogleProvider(
+      base_url=base_url,
+      required_scopes=["https://www.googleapis.com/auth/adwords"],
+  )
 
 
 def main():
@@ -29,7 +49,7 @@ def main():
   asyncio.run(update_views_yaml())  # Check and update docs resource
   api.get_ads_client()  # Check Google Ads credentials
   print("mcp server starting...")
-  mcp_server.run()  # Initialize and run the server
+  mcp_server.run(transport="streamable-http")  # Initialize and run the server
 
 
 if __name__ == "__main__":

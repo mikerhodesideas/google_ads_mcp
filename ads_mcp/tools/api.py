@@ -19,19 +19,38 @@ from typing import Any
 
 from ads_mcp.coordinator import mcp_server as mcp
 from ads_mcp.utils import ROOT_DIR
+
+from fastmcp.server.dependencies import get_access_token
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 from google.ads.googleads.util import get_nested_attr
-from google.ads.googleads.v21.services.services.customer_service import (
-    CustomerServiceClient,
-)
-from google.ads.googleads.v21.services.services.google_ads_service import (
-    GoogleAdsServiceClient,
-)
+from google.ads.googleads.v21.services.services.customer_service import CustomerServiceClient
+from google.ads.googleads.v21.services.services.google_ads_service import GoogleAdsServiceClient
+from google.oauth2.credentials import Credentials
 import proto
+import yaml
+
+_ADS_CLIENT: GoogleAdsClient | None = None
 
 
 def get_ads_client() -> GoogleAdsClient:
+  """Gets a GoogleAdsClient instance.
+
+  Looks for an access token from the environment or loads credentials from
+  a YAML file.
+
+  Returns:
+      A GoogleAdsClient instance.
+
+  Raises:
+      FileNotFoundError: If the credentials YAML file is not found.
+  """
+  global _ADS_CLIENT
+
+  access_token = get_access_token()
+  if access_token:
+    access_token = access_token.token
+
   default_path = f"{ROOT_DIR}/google-ads.yaml"
   credentials_path = os.environ.get("GOOGLE_ADS_CREDENTIALS", default_path)
   if not os.path.isfile(credentials_path):
@@ -39,10 +58,22 @@ def get_ads_client() -> GoogleAdsClient:
         "Google Ads credentials YAML file is not found. "
         "Check [GOOGLE_ADS_CREDENTIALS] config."
     )
-  return GoogleAdsClient.load_from_storage(credentials_path)
+
+  if access_token:
+    credentials = Credentials(access_token)
+    with open(credentials_path, "r", encoding="utf-8") as f:
+      ads_config = yaml.safe_load(f.read())
+    return GoogleAdsClient(
+        credentials, developer_token=ads_config.get("developer_token")
+    )
+
+  if not _ADS_CLIENT:
+    _ADS_CLIENT = GoogleAdsClient.load_from_storage(credentials_path)
+
+  return _ADS_CLIENT
 
 
-@mcp.tool(structured_output=True)
+@mcp.tool()
 def list_accessible_accounts() -> list[str]:
   """Lists Google Ads customers id directly accessible by the user.
 
