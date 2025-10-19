@@ -1,0 +1,58 @@
+{
+  "websavvy": {
+    "id": "9978959108",
+    "aliases": ["997", "WebSavvy", "Digital Divide", "DDG"],
+    "name": "WebSavvy / Digital Divide",
+    "currency": "AUD",
+    "type": "manager"
+  },
+  "butcherbox": {
+    "id": "9642575967",
+    "aliases": ["ButcherBox", "bb"],
+    "name": "ButcherBox",
+    "currency": "USD",
+    "type": "client"
+  },
+  "kipco": {
+    "id": "4779792239",
+    "aliases": ["Kip&Co", "kip"],
+    "name": "Kip&Co",
+    "currency": "AUD",
+    "type": "client"
+  },
+  "bdo_furniture": {
+    "id": "2827975704",
+    "aliases": ["BDO Furniture", "bdo"],
+    "name": "BDO Furniture",
+    "currency": "AUD",
+    "type": "client"
+  },
+  "swimwear_galore": {
+    "id": "7415198088",
+    "aliases": ["Swimwear Galore", "swimwear", "swg"],
+    "name": "Swimwear Galore",
+    "currency": "AUD",
+    "type": "client"
+  },
+  "scottish_shutters": {
+    "id": "9882330267",
+    "aliases": ["SSC", "Scottish Shutters", "Scottish Shutter Company", "The Scottish Shutter Company", "Rocknowe Interiors"],
+    "name": "Rocknowe Interiors Ltd t/a The Scottish Shutter Company (2025)",
+    "currency": "GBP",
+    "type": "client"
+  },
+  "mr_pool_man": {
+    "id": "7435598264",
+    "aliases": ["MPM", "Pool Man", "Mr Pool Man"],
+    "name": "Mr Pool Man",
+    "currency": "AUD",
+    "type": "client"
+  },
+  "mike_rhodes_ideas": {
+    "id": "5407170017",
+    "aliases": ["MRI", "Mike Rhodes Ideas", "MCC"],
+    "name": "Mike Rhodes Ideas",
+    "currency": "AUD",
+    "type": "manager"
+  }
+}

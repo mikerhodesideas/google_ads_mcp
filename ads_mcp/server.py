@@ -49,7 +49,9 @@ def main():
   asyncio.run(update_views_yaml())  # Check and update docs resource
   api.get_ads_client()  # Check Google Ads credentials
   print("mcp server starting...")
-  mcp_server.run(transport="streamable-http")  # Initialize and run the server
+  # Use stdio for Claude Code, streamable-http for Cursor/Gemini
+  transport = os.getenv("MCP_TRANSPORT", "stdio")
+  mcp_server.run(transport=transport)  # Initialize and run the server
 
 
 if __name__ == "__main__":
